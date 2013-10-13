@@ -19,10 +19,10 @@ Method needed:
   - get_helpers_id_list: Fetch the helpers to announce them all the grid''s node (IP based auth)
 
 
-Helper
-------
+Access point servers
+-------------------
 
-Standard Tahoe LAFS helper
+Tahoe LAFS clients able to access to the full list of nodes. Nginx locally proxify Tahoe Web API and 
 
 
 Storage/Client server
