@@ -1,0 +1,29 @@
+--- yolo.py     2013-11-08 11:15:08.697603800 +0100
++++ server.py   2013-11-08 11:12:55.540137090 +0100
+@@ -97,6 +97,15 @@
+         nodeid = b32decode(SturdyRef(furl).tubID.upper())
+         index = (service_name, nodeid)
+ 
++        tubid = SturdyRef(furl).tubID
++        if tubid == 'yaimngd2zwfwobsm66pgc2ixagkdtsjy':
++            self.log("Not announced node: %s", (tubid))
++            if index in self._announcements:
++                del self._announcements[index]
++                self._debug_counts["inbound_update"] -= 1
++                self.log("YOLO SWAG")
++            return
++
+         if index in self._announcements:
+             (old_announcement, timestamp) = self._announcements[index]
+             if old_announcement == announcement:
+@@ -129,6 +138,10 @@
+             self.log("but they're already subscribed, ignoring",
+                      level=log.UNUSUAL)
+             return
++        tubid = subscriber.getRemoteTubID()
++        if tubid == 'yaimngd2zwfwobsm66pgc2ixagkdtsjy':
++            self.log("Not registered node: %s", (tubid))
++            return
+         subscribers[subscriber] = time.time()
+         def _remove():
+             self.log("introducer: unsubscribing[%s] %s" % (service_name,

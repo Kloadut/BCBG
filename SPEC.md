@@ -1,65 +1,35 @@
-Idea
-====
+YunoHost node
+-------------
 
-Tahoe LAFS grid with filtered access. The only access points are helpers, with authentication. The grid is however only composed of storage/client servers: you have to be a storage server (and have a cID) to have access to the grid. A central database is storing every useful informations.
-
-
-Components
-----------
-  - Tahoe LAFS (1.9.2 tested)
-  - Subscribe server
+Modified Tahoe LAFS client/server that requests authorization before uploading a share (as a client), and check authorization before accepting a share (as a storage server).
+Only immutable files are concerned (and allowed) for now.
 
 
 Introducer
 ----------
 
-Modified Tahoe LAFS introducer with tubID filtering
-
-Method needed:
-  - get_helpers_id_list: Fetch the helpers to announce them all the grid''s node (IP based auth)
+Modified Tahoe LAFS introducer to publish and announce every registered and non-banned nodes.
 
 
-Access point servers
--------------------
+Authorization server
+--------------------
 
-Tahoe LAFS clients able to access to the full list of nodes. Nginx locally proxify Tahoe Web API and 
-
-
-Storage/Client server
----------------------
-
-Standard Tahoe LAFS node with stats_gatherer furl (see https://tahoe-lafs.org/trac/tahoe-lafs/browser/trunk/docs/stats.rst )
+Simple Lua/Nginx service that manages authorizations between Tahoe nodes. Gives authorizations to non-banned nodes and checks available free-space in database.
 
 
-BCBG Client
------------
+Cron
+----
 
-Client of Web API
-
-Methods needed (cID/pass auth):
-  - list_files: get a list of your backups
-  - put_file: upload a file to the grid via an helper
-  - get_file: download on of your backup via an helper
-  - delete_file: delete on of your backup via an helper
-
+Python cron that checks every Tahoe nodes of the grid regurlarily and randomly.
+If a storage node becomes unavailable, it can ban it in databse so that its upload capability becomes disabled.
 
 Database
 --------
 
-Standard PostreSQL database
-
-
-Cron checker
-------------
-
-Python cron that check storage nodes stats, availability, consistency.
-
-Method needed (IP based auth):
-  - get_node_list: Get domain/ip of every node of the grid
-  - warn_node: add a warning for a node (that is not a storage node or unavailable)
-
-
-Web API
--------
-
-TODO: Routes
+PostgreSQL database that list every nodes in the grid.
+Rows :
+* ID
+* nodeID
+* IP
+* is_banned
+* is_warned
